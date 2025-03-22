@@ -1,9 +1,14 @@
 [switcher]
-192.168.0.4
-192.168.0.5
+192.168.0.4 ansible_network_os=cisco.ios.ios ansible_connection=network_cli ansible_user=cisco ansible_password=cisco
+192.168.0.5 ansible_network_os=cisco.ios.ios ansible_connection=network_cli ansible_user=cisco ansible_password=cisco
 
 [rutere]
-192.168.0.2
-192.168.0.3
-192.168.0.253
-192.168.0.254
+192.168.0.2 ansible_network_os=cisco.ios.ios ansible_connection=network_cli ansible_user=cisco ansible_password=cisco
+192.168.0.3 ansible_network_os=cisco.ios.ios ansible_connection=network_cli ansible_user=cisco ansible_password=cisco
+
+[ruter1]
+192.168.0.2 ansible_network_os=cisco.ios.ios ansible_connection=network_cli ansible_user=cisco ansible_password=cisco
+
+[ruter2]
+192.168.0.3 ansible_network_os=cisco.ios.ios ansible_connection=network_cli ansible_user=cisco ansible_password=cisco
+

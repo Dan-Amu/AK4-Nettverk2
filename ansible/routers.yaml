@@ -1,2 +1,23 @@
 ---
 
+- name: Test script
+  hosts: ruter2
+  tasks:
+    - name: Set up interface 2
+      cisco.ios.ios_config:
+        lines:
+          - ip address dhcp
+          - ip nat outside
+        parents: "interface GigabitEthernet0/1"
+
+    - name: set up NAT
+      cisco.ios.ios_config:
+        lines:
+          - access-list 100 permit ip 192.168.0.0 0.0.0.255 any
+          - ip nat inside source list 100 interface GigabitEthernet0/1 overload
+
+    - name: Set up interface 1
+      cisco.ios.ios_config:
+        lines:
+          - ip nat inside
+        parents: "interface GigabitEthernet0/0.10"

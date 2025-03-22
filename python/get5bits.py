@@ -7,6 +7,6 @@ paritybits = serial.PARITY_NONE
 stop = serial.STOPBITS_ONE
 flowcontrol = False
 ser = serial.Serial('/dev/ttyACM0', baudrate=baud, bytesize=databits, parity=paritybits, stopbits=stop, xonxoff=flowcontrol, timeout=0)
-ser.write(b'\r')
-in_waiting.get()
-print(readBytes)
+ser.write(b'en\r')
+#in_waiting.get()
+#print(readBytes)
