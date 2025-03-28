@@ -1,4 +1,5 @@
-switchports = {"portType":"FastEthernet", "count":24, "layout":"0/0/0"}
-uplinks = {"portType":"GigabitEthernet", "count":4, "layout":"0/1"}
-portLayout = [switchports, uplinks]
-print(portLayout)
+import re
+username_regex = re.compile(r"[^a-z]+g")
+while True:
+
+    print(username_regex.match(input("Test string:")))
