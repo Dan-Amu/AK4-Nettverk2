@@ -1,8 +1,6 @@
 import re
 ip_regex = re.compile(r"^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}$")
 username_regex = re.compile(r"[^a-z]+g")
-global tasks
-tasks = []
 
 def getNumberInput(lowNum, highNum, InputString):
     while True:
@@ -40,6 +38,7 @@ def CIDRtoMask(CIDR):
     return subnetMask
 
 def getConfig(cfg):
+    global portLayout
     #    ser.write(b'en\r\n')
     #    ser.write(b'show run\r\n')
 #        output = []
@@ -56,7 +55,9 @@ def getConfig(cfg):
     return portLayout
 
 def getInput():
+    tasks = []
     while True:
+        print(" ")
         print("What tasks do you want to perform?")
         print("1. Configure an interface.           2. Something")
         print("3. Set up management interface       4. Create user")
@@ -72,22 +73,28 @@ def getInput():
             continue
         match selectedOption:
             case 1:
-                inputConfigureInt()
+                var1 = inputConfigureInt()
+                tasks.append(var1)
             case 2:
-                something()
+                var2 = something()
+                tasks.append(var2)
             case 3:
-                setupmgmt()
+                var3 = setupmgmt()
+                tasks.append(var3)
             case 4:
-                createUser()
+                var4 = createUser()
+                tasks.append(var4)
             case 5:
-                setupSSH()
+                var5 = setupSSH()
+                tasks.append(var5)
             case 9:
                 break
             case _:
                 print("Unknown option selected\n")
+    return tasks
 
 def inputConfigureInt():
-    global tasks
+    global portLayout
     while True:
         intToConfigure = input("Select Interface type: 1. FastEthernet 2. GigabitEthernet [1, 2] :")
         try:
@@ -146,14 +153,12 @@ def inputConfigureInt():
         print(portCFG)
         break
     retval = [currentInterface, portCFG]
-    tasks.append(["configureInterface", currentInterface, portCFG])
-    return [currentInterface, portCFG]
+    return ["configureInterface", currentInterface, portCFG]
 
 def something():
     pass
 
 def setupmgmt():
-    global tasks
     vlan = getNumberInput(1, 4094, "Enter management VLAN number. [1-4094] : ")
     print("\n")
 
@@ -171,7 +176,7 @@ def setupmgmt():
         print(subnetMask)
 
         break
-    tasks.append(["confmgmgt", vlan, ipAddress, subnetMask])
+    return ["confmgmgt", vlan, ipAddress, subnetMask]
         
 def createUser():
     while True:
@@ -186,13 +191,13 @@ def createUser():
         if len(password) < 33:
             print("Accepted")
             break
-    tasks.append(["adduser", username, password])
+    return ["adduser", username, password]
 
 def setupSSH():
     hostName = input("Enter device hostname: ")
     domainName = input("Enter domain name: ")
 
-    tasks.append(["setupssh", hostName, domainName])
+    return ["setupssh", hostName, domainName]
 
 def staticRoute():
     while True:
@@ -213,6 +218,6 @@ def staticRoute():
 if __name__ == '__main__':
 
     portLayout = getConfig()
-    getInput()
+    tasks = getInput()
 
     print(tasks)
