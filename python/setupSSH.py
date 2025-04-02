@@ -43,6 +43,11 @@ def configureTasks(tasks):
                     commandsToRun.append("switchport mode trunk")
                     commandsToRun.append(f"switchport trunk allowed vlan {task[2][1]}")
                     completedTask = "Trunk port configured"
+                elif task[2][0] == "router":
+                    commandsToRun.append("no switchport")
+                    commandsToRun.append(f"ip address {task[2][1]} {task[2][2]}")
+                    commandsToRun.append("no shutdown")
+                    completedTask = "Router port configured"
                 commandsToRun.append("end")
             case "confmgmt":
                 commandsToRun.append(f"interface vlan{task[1]}")
@@ -64,7 +69,10 @@ def configureTasks(tasks):
                 commandsToRun.append("transport input ssh")
                 commandsToRun.append("end")
                 completedTask = "SSH configured"
-
+            case "staticroute":
+                commandsToRun.append(f"ip route {task[1]} {task[2]} {task[3]}")
+                commandsToRun.append("end")
+                completedTask = "Static route created"
             case _:
                 completedTask = "nothing"
                 pass
@@ -96,7 +104,7 @@ while True:
     if connection == "2":
         connType = "USB"
         skip_serial = False
-        print("USB connections can be slow, you may need to be patient.")
+        print("USB connections can be slow, you may have to be patient.")
         break
     elif connection == "1":
         connType = "RS232"
@@ -111,7 +119,6 @@ while True:
 if not skip_serial:
     ser = serial.Serial(serialDevice, baudrate=starting_baud, bytesize=databits, parity=paritybits, stopbits=stop, xonxoff=flowcontrol, timeout=5)
     print("connected to ", ser.name)
-
 
     writeToDevice('')
     writeToDevice('en')

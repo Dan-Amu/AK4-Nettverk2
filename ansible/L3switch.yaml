@@ -1,0 +1,36 @@
+---
+
+- name: configure L3 switch
+  hosts: L3switch
+  gather_facts: false
+  connection: network_cli
+  tasks:
+    - name: Load variables
+      ansible.builtin.include_vars: variables.yaml
+    - name: Set up router port for Router1
+      cisco.ios.ios_config:
+        lines:
+          - no switchport
+          - ip address 192.168.254.2 255.255.255.252
+        parents: "interface GigabitEthernet1/0/3"
+
+    - name: Set up router port for Router2
+      cisco.ios.ios_config:
+        lines:
+          - no switchport
+          - ip address 192.168.253.2 255.255.255.252
+        parents: "interface GigabitEthernet1/0/4"
+
+    - name: Enable ip routing
+      cisco.ios.ios_config:
+        lines:
+          - ip routing
+    - name: configure OSPF
+      cisco.ios.ios_config:
+        lines:
+          - router-id 1.1.1.1
+          - network 192.168.99.0 0.0.0.255 area 0
+          - network 192.168.253.0 0.0.0.3 area 0
+          - network 192.168.254.0 0.0.0.3 area 0
+        parents: router ospf 10
+

@@ -1,5 +1,6 @@
 import re
 ip_regex = re.compile(r"^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}$")
+#ip_regex = re.compile(r"^((25[0-5]|(2[0-4]|1\d|[0-9]|)\d)\.?\b){4}$")
 username_regex = re.compile(r"[^a-z]+g")
 
 def getNumberInput(lowNum, highNum, InputString):
@@ -55,7 +56,7 @@ def getConfig(cfg):
     print(actualInterfaces)
 #if there's an interface that contains two slashes, use that?
 #next interface after the one with two slashes is uplink? random 4am thought do verify
-    switchports = {"portType":"FastEthernet", "count":24, "layout":"1/0/0"}
+    switchports = {"portType":"FastEthernet", "count":24, "layout":"0/0"}
     uplinks = {"portType":"GigabitEthernet", "count":4, "layout":"0/1"}
     portLayout = {"switchports":switchports, "uplinks":uplinks} 
 
@@ -66,8 +67,8 @@ def getInput():
     while True:
         print(" ")
         print("What tasks do you want to perform?")
-        print("1. Configure an interface.           2. Something")
-        print("3. Set up management interface       4. Create user")
+        print("1. Configure an interface.           2. Create user")
+        print("3. Set up management interface       4. Configure static route")
         print("5. Run commands for ssh setup.")
         print("9. Apply configuration")
         selectedOption = input("Select option [1-9]: ")
@@ -83,13 +84,13 @@ def getInput():
                 var1 = inputConfigureInt()
                 tasks.append(var1)
             case 2:
-                var2 = something()
+                var2 = createUser()
                 tasks.append(var2)
             case 3:
                 var3 = setupmgmt()
                 tasks.append(var3)
             case 4:
-                var4 = createUser()
+                var4 = setupStaticRoute()
                 tasks.append(var4)
             case 5:
                 var5 = setupSSH()
@@ -121,17 +122,19 @@ def inputConfigureInt():
         subjectIntNumber = getNumberInput(1, portLayout["switchports"]["count"], "Enter interface number. [1-"+str(portLayout["switchports"]["count"])+"] : ") 
         print("selected: ", subjectIntNumber, "\n")
         while True:
-            portMode = input("Select port mode: 1. Trunk 2. Access [1, 2]: ")
+            portMode = input("Select port mode: 1. Trunk 2. Access 3. Routing [1, 2, 3]: ")
             try:
                 portMode = int(portMode)
             except:
                 print("Invalid Input. Enter the number next to the mode.\n")
                 continue
-            portCFG= ["", ""]
+            portCFG= ["", "", ""]
             if portMode == 1:
                 portCFG[0] = "trunk" 
             elif portMode == 2:
                 portCFG[0] = "access"
+            elif portMode == 3:
+                portCFG[0] = "router"
             else:
                 print("Invalid Input. Enter the number next to the mode.\n")
                 continue
@@ -151,8 +154,18 @@ def inputConfigureInt():
 #
             if portCFG[0] == "access":
                 portCFG[1] = getNumberInput(1, 4094, "Enter Access Port VLAN: ")
-            print("selected: ", portCFG, "\n")
-            break
+            print("selected: ", portCFG[0], "\n")
+            if portCFG[0] == "router":
+                while True:
+                    portCFG[1] = input("Enter IP address of routing interface. [*.*.*.*] : ")
+                    portCFG[1] = portCFG[1].replace(",",".")
+                    if ip_regex.match(portCFG[1]):
+                        break 
+                    else:
+                        print("Not a valid IP address.\n")
+                routerportCIDR = getNumberInput(1, 31, "Enter subnet mask size [1-31] : ")
+                portCFG[2] = CIDRtoMask(routerportCIDR)
+            break        
         editedLayout = portLayout["switchports"]["layout"]
         editedLayout = editedLayout[:-1]
         currentInterface = subjectInterface+editedLayout+str(subjectIntNumber)
@@ -207,20 +220,27 @@ def setupSSH():
 
     return ["setupssh", hostName, domainName]
 
-def staticRoute():
+def setupStaticRoute():
     while True:
-
         destPrefix = input("Enter route destination prefix: ")
         if ip_regex.match(destPrefix):
+            break
+        else:
             print("Invalid IP address")
-            continue
-        break
     while True:
         destMask = input("Enter route destination mask: ")
         if ip_regex.match(destMask):
+            break
+        else:
             print("Invalid subnet mask")
-            continue
-        break
+    while True:
+        nextHop = input("Enter route destination mask: ")
+        if ip_regex.match(nextHop):
+            break
+        else:
+            print("Invalid IP address")
+    print(["staticroute", destPrefix, destMask, nextHop])
+    return ["staticroute", destPrefix, destMask, nextHop]
 
 
 if __name__ == '__main__':

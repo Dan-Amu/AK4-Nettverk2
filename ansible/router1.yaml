@@ -1,0 +1,39 @@
+---
+
+- name: Configure router 1
+  hosts: ruter1
+  gather_facts: false
+  connection: network_cli
+  tasks:
+    - name: Load variables
+      ansible.builtin.include_vars: variables.yaml
+
+    - name: Set up outside interface
+      cisco.ios.ios_config:
+        lines:
+          - ip address 192.168.254.1 255.255.255.252
+          - no shutdown
+        parents: "interface GigabitEthernet0/1"
+
+    - name: Enable inside interface
+      cisco.ios.ios_config:
+        lines:
+          - no shutdown
+        parents: "interface GigabitEthernet0/0"
+
+    - name: Set up inside subinterface 10
+      cisco.ios.ios_config:
+        lines:
+          - encapsulation dot1q 10
+          - ip address 192.168.10.3 255.255.255.0
+          - no shutdown
+        parents: "interface GigabitEthernet0/0.10"
+
+    - name: configure OSPF
+      cisco.ios.ios_config:
+        lines:
+          - router-id 4.1.1.1
+          - network 192.168.254.0 0.0.0.3 area 0
+          - network 192.168.10.0 0.0.0.255 area 1
+        parents: router ospf 10
+    
