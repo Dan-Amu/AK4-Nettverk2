@@ -39,16 +39,23 @@ def CIDRtoMask(CIDR):
 
 def getConfig(cfg):
     global portLayout
+
+    interfaceTypes = ['Ethernet', 'FastEthernet', 'GigabitEthernet', 'TenGigabitEthernet', 'Serial']
     #    ser.write(b'en\r\n')
     #    ser.write(b'show run\r\n')
 #        output = []
 #        while ser.in_waiting > 0:
 #            line = ser.readline().decode('utf-8').strip()
 #            output.append(line)
+    actualInterfaces = []
     for line in cfg:
-        if "interface" in line:
-            print(line)
-    switchports = {"portType":"FastEthernet", "count":24, "layout":"0/0/0"}
+        for iface in interfaceTypes:
+            #if f"interface {iface}" in line:
+            actualInterfaces.append(line)
+    print(actualInterfaces)
+#if there's an interface that contains two slashes, use that?
+#next interface after the one with two slashes is uplink? random 4am thought do verify
+    switchports = {"portType":"FastEthernet", "count":24, "layout":"1/0/0"}
     uplinks = {"portType":"GigabitEthernet", "count":4, "layout":"0/1"}
     portLayout = {"switchports":switchports, "uplinks":uplinks} 
 
@@ -62,7 +69,7 @@ def getInput():
         print("1. Configure an interface.           2. Something")
         print("3. Set up management interface       4. Create user")
         print("5. Run commands for ssh setup.")
-        print("9. Finish")
+        print("9. Apply configuration")
         selectedOption = input("Select option [1-9]: ")
         print("\n")
         
@@ -176,21 +183,22 @@ def setupmgmt():
         print(subnetMask)
 
         break
-    return ["confmgmgt", vlan, ipAddress, subnetMask]
+    return ["confmgmt", vlan, ipAddress, subnetMask]
         
 def createUser():
     while True:
         username = input("Enter username: ") ##TODO: REGEX BROKEN
         print((len(username) < 33) , username_regex.match(username))
-        if len(username) < 33 and username_regex.match(username):
-            print("Accepted:")
-            break
+        if len(username) < 33 and len(username) > 0: # and username_regex.match(username):
+            print("Accepted")
         else:
             continue
         password = input("enter password: ")
-        if len(password) < 33:
+        if len(password) < 33 and len(password) > 0:
             print("Accepted")
-            break
+        else:
+            continue
+        break
     return ["adduser", username, password]
 
 def setupSSH():

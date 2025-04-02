@@ -12,7 +12,7 @@ flowcontrol = False
 
 global tasks
 
-def writeToDevice(content, delay=0.25):
+def writeToDevice(content, delay=0.5):
     if ser:
         content = content + '\r\n'
         content = content.encode('utf-8')
@@ -27,8 +27,63 @@ def writeToDevice(content, delay=0.25):
     else:
         print("serial device not initialized")
         return 1
+
+def configureTasks(tasks):
+    for task in tasks:
+        commandsToRun = ["conf term"]
+        
+        match task[0]:
+            case "configureInterface":
+                commandsToRun.append(f"interface {task[1]}")
+                if task[2][0] == "access":
+                    commandsToRun.append("switchport mode access")
+                    commandsToRun.append(f"switchport access vlan {task[2][1]}")
+                    completedTask = "Access port configured"
+                elif task[2][0] == "trunk":
+                    commandsToRun.append("switchport mode trunk")
+                    commandsToRun.append(f"switchport trunk allowed vlan {task[2][1]}")
+                    completedTask = "Trunk port configured"
+                commandsToRun.append("end")
+            case "confmgmt":
+                commandsToRun.append(f"interface vlan{task[1]}")
+                commandsToRun.append(f"ip address {task[2]} {task[3]}")
+                commandsToRun.append("no shutdown")
+                commandsToRun.append("end")
+                completedTask = "Management VLAN interface configured"
+            case "adduser":
+                commandsToRun.append(f"username {task[1]} privilege 15 secret {task[2]}")
+                commandsToRun.append("end")
+                completedTask = "User added"
+            case "setupssh":
+                commandsToRun.append(f"hostname {task[1]}")
+                commandsToRun.append(f"ip domain name {task[2]}")
+                commandsToRun.append("longDelayForKeygen") #insert magic string to tell loop that it should increase the delay on next write
+                commandsToRun.append("crypto key generate rsa gen mod 1024")
+                commandsToRun.append("line vty 0 4")
+                commandsToRun.append("login local")
+                commandsToRun.append("transport input ssh")
+                commandsToRun.append("end")
+                completedTask = "SSH configured"
+
+            case _:
+                completedTask = "nothing"
+                pass
+
+        longDelayForKeygen = False
+        for lines in commandsToRun:
+            if lines == "longDelayForKeygen":
+                longDelayForKeygen = True
+            else:
+                if longDelayForKeygen == True:
+                    writeToDevice(lines, delay=10)
+                else:
+                    writeToDevice(lines)
+                longDelayForKeygen = False
+                print("%", end="")
+        print("\n", completedTask)
+            
 try:
-    sys.argv[1] = sys.argv[1]
+    serialDevice = sys.argv[1]
 except IndexError:
     print(f"Enter the serial device as first argument. E.g. \'python3 {sys.argv[0]} /dev/ttyACM0\' ")
     exit()
@@ -47,15 +102,15 @@ while True:
         connType = "RS232"
         skip_serial = False
         break
-    elif connection == "debug":
+    elif connection == "debug" or connection == "noserial":
         skip_serial = True
         break
     else:
         print("Invalid option")
         continue
 if not skip_serial:
-    ser = serial.Serial('/dev/ttyACM0', baudrate=starting_baud, bytesize=databits, parity=paritybits, stopbits=stop, xonxoff=flowcontrol, timeout=5)
-    print(ser.name)
+    ser = serial.Serial(serialDevice, baudrate=starting_baud, bytesize=databits, parity=paritybits, stopbits=stop, xonxoff=flowcontrol, timeout=5)
+    print("connected to ", ser.name)
 
 
     writeToDevice('')
@@ -69,15 +124,20 @@ if not skip_serial:
     else:
         output = writeToDevice('show run | inc interface', delay=10)
     print(output)
+
 else:
-    output = []
+    output = ['show run | inc interface', 'interface GigabitEthernet5/0/1', 'interface GigabitEthernet5/0/2', 'interface GigabitEthernet5/0/3', 'interface GigabitEthernet5/0/4', 'interface GigabitEthernet5/0/5', 'interface GigabitEthernet5/0/6', 'interface GigabitEthernet5/0/7', 'interface GigabitEthernet5/0/8', 'interface GigabitEthernet5/0/9', 'interface GigabitEthernet5/0/10', 'interface GigabitEthernet5/0/11', 'interface GigabitEthernet5/0/12', 'interface GigabitEthernet5/0/13', 'interface GigabitEthernet5/0/14', 'interface GigabitEthernet5/0/15', 'interface GigabitEthernet5/0/16', 'interface GigabitEthernet5/0/17', 'interface GigabitEthernet5/0/18', 'interface GigabitEthernet5/0/19', 'interface GigabitEthernet5/0/20', 'interface GigabitEthernet5/0/21', 'interface GigabitEthernet5/0/22', 'interface GigabitEthernet5/0/23', 'interface GigabitEthernet5/0/24', 'interface GigabitEthernet5/0/25', 'interface GigabitEthernet5/0/26', 'interface GigabitEthernet5/0/27', 'interface GigabitEthernet5/0/28', 'interface Vlan1', 'monitor session 1 source interface Gi5/0/1 - 13', 'monitor session 1 destination interface Gi5/0/16', 'GigaSwitch#', 'GigaSwitch#']
 portLayout = getuserinput.getConfig(output)
 
 tasks = getuserinput.getInput()
 print(tasks)
 
+configureTasks(tasks)
+
+
 if not skip_serial:
     writeToDevice('end')
-    writeToDevice('terminal speed 9600')
+    writeToDevice('write memory')
+#    writeToDevice(f"terminal speed {starting_baud}")
     ser.close()
 
