@@ -137,7 +137,7 @@ else:
 portLayout = getuserinput.getConfig(output)
 
 tasks = getuserinput.getInput()
-print(tasks)
+#print(tasks)
 
 configureTasks(tasks)
 
@@ -147,4 +147,4 @@ if not skip_serial:
     writeToDevice('write memory')
 #    writeToDevice(f"terminal speed {starting_baud}")
     ser.close()
-
+print("Done!")

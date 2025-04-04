@@ -155,6 +155,7 @@ def inputConfigureInt():
             if portCFG[0] == "access":
                 portCFG[1] = getNumberInput(1, 4094, "Enter Access Port VLAN: ")
             print("selected: ", portCFG[0], "\n")
+
             if portCFG[0] == "router":
                 while True:
                     portCFG[1] = input("Enter IP address of routing interface. [*.*.*.*] : ")
@@ -166,6 +167,7 @@ def inputConfigureInt():
                 routerportCIDR = getNumberInput(1, 31, "Enter subnet mask size [1-31] : ")
                 portCFG[2] = CIDRtoMask(routerportCIDR)
             break        
+
         editedLayout = portLayout["switchports"]["layout"]
         editedLayout = editedLayout[:-1]
         currentInterface = subjectInterface+editedLayout+str(subjectIntNumber)
@@ -182,7 +184,6 @@ def setupmgmt():
     vlan = getNumberInput(1, 4094, "Enter management VLAN number. [1-4094] : ")
     print("\n")
 
-    #reversePowersOf2 = [ 2 ** x for x in range(7, 0, -1) ]
     while True:
         while True:
             ipAddress = input("Enter IP address of VLAN interface. [*.*.*.*] : ")
@@ -206,7 +207,7 @@ def createUser():
             print("Accepted")
         else:
             continue
-        password = input("enter password: ")
+        password = input("Enter password: ")
         if len(password) < 33 and len(password) > 0:
             print("Accepted")
         else:
@@ -222,19 +223,22 @@ def setupSSH():
 
 def setupStaticRoute():
     while True:
-        destPrefix = input("Enter route destination prefix: ")
+        destPrefix = input("Enter route destination prefix [*.*.*.*] : ")
+        destPrefix = destPrefix.replace(",",".")
         if ip_regex.match(destPrefix):
             break
         else:
             print("Invalid IP address")
     while True:
-        destMask = input("Enter route destination mask: ")
+        destMask = input("Enter route destination mask [*.*.*.*] : ")
+        destMask = destMask.replace(",",".")
         if ip_regex.match(destMask):
             break
         else:
             print("Invalid subnet mask")
     while True:
-        nextHop = input("Enter route destination mask: ")
+        nextHop = input("Enter next hop address [*.*.*.*] :")
+        nextHop = nextHop.replace(",",".")
         if ip_regex.match(nextHop):
             break
         else:

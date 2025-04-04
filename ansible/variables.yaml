@@ -1,0 +1,43 @@
+---
+vars:
+  routers_common:
+    hsrp:
+      standby_group: 10
+      standby_hello_timer: 1
+      standby_hold_timer: 3
+      standby_ip_10: '192.168.10.1'
+      standby_ip_99: '192.168.99.1'
+
+  router1:
+    north_interface:
+      name: 'GigabitEthernet0/1'
+      address: '192.168.254.1'
+      netmask: '255.255.255.252'
+    south_interfaces:
+      - {name: 'GigabitEthernet0/0.10', address: '192.168.10.2', netmask: '255.255.255.0', subinterface: true}
+      - {name: 'GigabitEthernet0/0.99', address: '192.168.99.2', netmask: '255.255.255.0', subinterface: true}
+    hsrp:
+      standby_priority: 110
+    ospf:
+      router-id: '2.1.1.1'
+      networks:
+        - 'network 192.168.254.0 0.0.0.3 area 0'
+        - 'network 192.168.10.0 0.0.0.255 area 1'
+        - 'network 192.168.99.0 0.0.0.255 area 1'
+
+  router2:
+    north_interface:
+      name: 'GigabitEthernet0/1'
+      address: '192.168.253.1'
+      netmask: '255.255.255.252'
+    south_interfaces:
+      - {name: 'GigabitEthernet0/0.10', address: '192.168.10.3', netmask: '255.255.255.0', subinterface: true}
+      - {name: 'GigabitEthernet0/0.99', address: '192.168.99.3', netmask: '255.255.255.0', subinterface: true}
+    hsrp:
+      standby_priority: 100
+    ospf:
+      router-id: '3.1.1.1'
+      networks:
+        - 'network 192.168.253.0 0.0.0.3 area 0'
+        - 'network 192.168.10.0 0.0.0.255 area 1'
+        - 'network 192.168.99.0 0.0.0.255 area 1'

@@ -11,7 +11,7 @@
     - name: Set up outside interface
       cisco.ios.ios_config:
         lines:
-          - ip address 192.168.253.1 255.255.255.252
+          - ip address 192.168.253.2 255.255.255.252
           - no shutdown
         parents: "interface GigabitEthernet0/1"
 
@@ -25,9 +25,23 @@
       cisco.ios.ios_config:
         lines:
           - encapsulation dot1q 10
-          - ip address 192.168.10.2 255.255.255.0
+          - ip address 192.168.10.3 255.255.255.0
           - no shutdown
+          - standby 10 ip 192.168.10.1
+          - standby 10 priority 100
+          - standby 10 timers 1 3
         parents: "interface GigabitEthernet0/0.10"
+
+    - name: Set up inside subinterface 99
+      cisco.ios.ios_config:
+        lines:
+          - encapsulation dot1q 99
+          - ip address 192.168.99.3 255.255.255.0
+          - no shutdown
+          - standby 99 ip 192.168.99.1
+          - standby 99 priority 100
+          - standby 99 timers 1 3
+        parents: "interface GigabitEthernet0/0.99"
 
     - name: configure OSPF
       cisco.ios.ios_config:
@@ -35,5 +49,6 @@
           - router-id 3.1.1.1
           - network 192.168.253.0 0.0.0.3 area 0
           - network 192.168.10.0 0.0.0.255 area 1
+          - network 192.168.99.0 0.0.0.255 area 1
         parents: router ospf 10
     
