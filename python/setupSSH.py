@@ -53,6 +53,8 @@ def configureTasks(tasks):
                 commandsToRun.append(f"interface vlan{task[1]}")
                 commandsToRun.append(f"ip address {task[2]} {task[3]}")
                 commandsToRun.append("no shutdown")
+                commandsToRun.append("exit")
+                commandsToRun.append(f"vlan {task[1]}")
                 commandsToRun.append("end")
                 completedTask = "Management VLAN interface configured"
             case "adduser":
