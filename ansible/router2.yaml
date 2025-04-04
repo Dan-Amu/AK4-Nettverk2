@@ -52,3 +52,15 @@
           - network 192.168.99.0 0.0.0.255 area 1
         parents: router ospf 10
     
+    - name: configure DHCP
+      cisco.ios.ios_config:
+        lines:
+          - network 192.168.10.0 255.255.255.0
+          - dns-server 192.168.10.1
+          - default-router 192.168.10.1
+        parents: "ip dhcp pool test" 
+    - name: exclude addresses handled by other router
+      cisco.ios.ios_config:
+        lines:
+          - ip dhcp excluded-address 192.168.10.1 192.168.10.126
+      

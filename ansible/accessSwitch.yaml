@@ -1,0 +1,46 @@
+---
+
+- name: configure Access switch
+  hosts: accessswitch
+  gather_facts: false
+  connection: network_cli
+  tasks:
+    - name: Load variables
+      ansible.builtin.include_vars: variables.yaml
+    - name: Set up trunk to core
+      cisco.ios.ios_config:
+        lines:
+          - switchport mode trunk
+          - switchport trunk allowed vlan 10,99
+        parents: "interface GigabitEthernet0/1"
+
+    - name: Set up port channel ports
+      cisco.ios.ios_config:
+        lines:
+          - switchport mode trunk
+          - channel-protocol lacp
+          - channel-group 1 mode active
+        parents:
+          - "interface range FastEthernet0/1-2"
+
+    - name: configure PortChannel interface
+      cisco.ios.ios_config:
+        lines:
+          - switchport mode trunk
+          - switchport trunk allowed vlan all
+          - no shutdown
+        parents: "interface Port-channel1"
+
+    - name: configure VLAN 10 access ports
+      cisco.ios.ios_config:
+        lines:
+          - switchport mode access
+          - switchport access vlan 10
+        parents: "interface FastEthernet0/13"
+
+    - name: configure VLAN 20 access ports
+      cisco.ios.ios_config:
+        lines:
+          - switchport mode access
+          - switchport access vlan 20
+        parents: "interface FastEthernet0/14"

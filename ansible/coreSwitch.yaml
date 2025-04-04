@@ -1,0 +1,22 @@
+---
+
+- name: configure Access switch
+  hosts: coreswitch
+  gather_facts: false
+  connection: network_cli
+  tasks:
+    - name: Load variables
+      ansible.builtin.include_vars: variables.yaml
+    - name: configure trunk to routers
+      cisco.ios.ios_config:
+        lines:
+          - switchport mode trunk
+          - switchport trunk allowed vlan 10,99
+        parents: "interface range GigabitEthernet1/0/1-2"
+
+    - name: configure trunk to access switch
+      cisco.ios.ios_config:
+        lines:
+          - switchport mode trunk
+          - switchport trunk allowed vlan 10,99
+        parents: "interface GigabitEthernet1/0/24"

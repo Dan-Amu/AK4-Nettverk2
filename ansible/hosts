@@ -1,9 +1,11 @@
 [L3switch]
 192.168.75.1 ansible_network_os=cisco.ios.ios ansible_connection=network_cli ansible_user=cisco ansible_password=cisco
 
-[switcher]
-192.168.0.4 ansible_network_os=cisco.ios.ios ansible_connection=network_cli ansible_user=cisco ansible_password=cisco
-192.168.0.5 ansible_network_os=cisco.ios.ios ansible_connection=network_cli ansible_user=cisco ansible_password=cisco
+[accessswitch]
+192.168.99.16 ansible_network_os=cisco.ios.ios ansible_connection=network_cli ansible_user=cisco ansible_password=cisco
+
+[coreswitch]
+192.168.99.15 ansible_network_os=cisco.ios.ios ansible_connection=network_cli ansible_user=cisco ansible_password=cisco
 
 [rutere]
 192.168.254.2 ansible_network_os=cisco.ios.ios ansible_connection=network_cli ansible_user=cisco ansible_password=cisco

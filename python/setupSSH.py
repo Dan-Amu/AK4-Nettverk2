@@ -22,7 +22,8 @@ def writeToDevice(content, delay=0.5):
         output = []
         while ser.in_waiting > 0:
             line = ser.readline().decode('utf-8').strip()
-            output.append(line)
+            if not output[-1] == line:
+                output.append(line)
         return output
     else:
         print("serial device not initialized")
@@ -89,7 +90,7 @@ def configureTasks(tasks):
                 else:
                     writeToDevice(lines)
                 longDelayForKeygen = False
-                print("%", end="")
+                print("!", end="")
         print("\n", completedTask)
             
 try:
