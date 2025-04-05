@@ -13,18 +13,23 @@ flowcontrol = False
 global tasks
 
 def writeToDevice(content, delay=0.5):
-    if ser:
+    output = []
+    if filewrite_mode or ser:
         content = content + '\r\n'
-        content = content.encode('utf-8')
-        ser.write(content)
-        ser.flush()
-        sleep(delay)
-        output = []
-        while ser.in_waiting > 0:
-            line = ser.readline().decode('utf-8').strip()
-            if not output[-1] == line:
-                output.append(line)
-        return output
+        if filewrite_mode == True:
+            file.write(content)
+            file.flush()
+            sleep(delay)
+        else:
+            content = content.encode('utf-8')
+            ser.write(content)
+            ser.flush()
+            sleep(delay)
+            while ser.in_waiting > 0 and filewrite_mode == False:
+                line = ser.readline().decode('utf-8').strip()
+                if not output[-1] == line:
+                    output.append(line)
+            return output
     else:
         print("serial device not initialized")
         return 1
@@ -102,6 +107,7 @@ except:
     print("Something went wrong. Exiting.")
     exit()
 
+filewrite_mode = False
 while True:
     connection = input("How are you connected to the device? [1 for RS232, 2 for USB] :")
     if connection == "2":
@@ -116,12 +122,22 @@ while True:
     elif connection == "debug" or connection == "noserial":
         skip_serial = True
         break
+    elif connection == "debug_filewrite":
+        connType = "file"
+        filewrite_mode = True
+        skip_serial = False
+        break
     else:
         print("Invalid option")
         continue
+
 if not skip_serial:
-    ser = serial.Serial(serialDevice, baudrate=starting_baud, bytesize=databits, parity=paritybits, stopbits=stop, xonxoff=flowcontrol, timeout=5)
-    print("connected to ", ser.name)
+    print("does this get run? skip_serial")
+    if not filewrite_mode:
+        ser = serial.Serial(serialDevice, baudrate=starting_baud, bytesize=databits, parity=paritybits, stopbits=stop, xonxoff=flowcontrol, timeout=5)
+    else:
+        file = open(serialDevice, "a")
+    print("connected to ", serialDevice)
 
     writeToDevice('')
     writeToDevice('en')
@@ -131,23 +147,28 @@ if not skip_serial:
         #ser.baudrate = 115200
 
         output = writeToDevice('show run | inc interface', delay=1)
-    else:
+    elif connType == "USB":
         output = writeToDevice('show run | inc interface', delay=10)
-    print(output)
 
-else:
+# if output is not set (in skip_serial or debug_filewrite mode), set it to placeholder data
+try: 
+    output=output
+except:
     output = ['show run | inc interface', 'interface GigabitEthernet5/0/1', 'interface GigabitEthernet5/0/2', 'interface GigabitEthernet5/0/3', 'interface GigabitEthernet5/0/4', 'interface GigabitEthernet5/0/5', 'interface GigabitEthernet5/0/6', 'interface GigabitEthernet5/0/7', 'interface GigabitEthernet5/0/8', 'interface GigabitEthernet5/0/9', 'interface GigabitEthernet5/0/10', 'interface GigabitEthernet5/0/11', 'interface GigabitEthernet5/0/12', 'interface GigabitEthernet5/0/13', 'interface GigabitEthernet5/0/14', 'interface GigabitEthernet5/0/15', 'interface GigabitEthernet5/0/16', 'interface GigabitEthernet5/0/17', 'interface GigabitEthernet5/0/18', 'interface GigabitEthernet5/0/19', 'interface GigabitEthernet5/0/20', 'interface GigabitEthernet5/0/21', 'interface GigabitEthernet5/0/22', 'interface GigabitEthernet5/0/23', 'interface GigabitEthernet5/0/24', 'interface GigabitEthernet5/0/25', 'interface GigabitEthernet5/0/26', 'interface GigabitEthernet5/0/27', 'interface GigabitEthernet5/0/28', 'interface Vlan1', 'monitor session 1 source interface Gi5/0/1 - 13', 'monitor session 1 destination interface Gi5/0/16', 'GigaSwitch#', 'GigaSwitch#']
 portLayout = getuserinput.getConfig(output)
 
 tasks = getuserinput.getInput()
 #print(tasks)
-
-configureTasks(tasks)
-
-
 if not skip_serial:
+    configureTasks(tasks)
+
+
+if not skip_serial and not filewrite_mode:
     writeToDevice('end')
     writeToDevice('write memory')
 #    writeToDevice(f"terminal speed {starting_baud}")
     ser.close()
+if filewrite_mode and not skip_serial:
+    writeToDevice('----------end of program run marker----------')
+    file.close()
 print("Done!")
