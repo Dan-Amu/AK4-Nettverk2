@@ -13,7 +13,7 @@ flowcontrol = False
 global tasks
 
 def writeToDevice(content, delay=0.5):
-    output = []
+    output = ['']
     if filewrite_mode or ser:
         content = content + '\r\n'
         if filewrite_mode == True:
