@@ -80,10 +80,18 @@ Every device you want to configure with Ansible will have to have an entry with 
 All you have to do is add an entry with the device's IP address in the hosts file, and then put the name you assigned on the line above into the ansible script:
 ![ansible hostsinscript](https://github.com/user-attachments/assets/88e6f8f0-d9dc-4f4c-b537-b1f3e77b8423)
 
-You can then run the ansible script with the ansible-playbook command. 
+You can then run any ansible script with the ansible-playbook command. 
 The -K flag may be necessary, if it is enter the enable password.
 ```bash
 ansible-playbook accessScript.yaml -K
 ```
 Example:
+
 ![bilde](https://github.com/user-attachments/assets/49f80bd7-3056-4881-b1d5-a0c0015877a1)
+
+
+The scripts included in this reposiory are:
+- L3switch.yaml
+  Configures a Layer 3 switch with three routing ports to connect a managemnt PC and the two routers, and configures OSPF to route between these.
+- router1.yaml and router2.yaml
+  Configures a router with a connection to the L3 switch, as well as a connection down to the core switch and VLAN 10 and 99 for management. Also configures HSRP between routers.
