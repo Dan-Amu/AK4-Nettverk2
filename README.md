@@ -3,8 +3,8 @@
 This repository contains a python script to automatically configure Cisco routers and switches to the point where they can be accessed by SSH (so Ansible can do further configuration).
 It also contains Ansible scripts to further configure Cisco routers and switches. The current Ansible files are set up to create a specific network, but should be easy to edit for other setups.
 
-![Screenshot 2025-04-07 023248](https://github.com/user-attachments/assets/972801b3-eb9c-49e6-a52b-99dac6df2f5c)!
-
+![NettverkBildeAK4](https://github.com/user-attachments/assets/0be62baa-86c6-4df0-b500-a0e93055036c)!
+The ansible scripts are named corresponding to the names in this image.
 
 ## Table of Contents
 - [Description](#description)
@@ -20,8 +20,13 @@ A more detailed description of the project, how it works, and any background inf
 
 ## Installation
 
+
 ### Prerequisites
-- List any prerequisites, e.g., Node.js, Python, Docker, etc.
+- Python3
+- Pyserial python package
+- Paramiko python package
+- Ansible
+Ansible will need a Linux version to run it. A WSL distro will work. (make sure to set WSL version to 1)
 
 ```bash
 # Example
