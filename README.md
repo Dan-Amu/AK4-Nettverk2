@@ -29,11 +29,29 @@ Can be installed by a package manager like apt
 sudo apt install python3 python-serial
 ```
 Other ways to install can be found here: ![https://pyserial.readthedocs.io/en/latest/pyserial.html#installation](https://pyserial.readthedocs.io/en/latest/pyserial.html#installation)
+
 ### Ansible
 - Ansible itself
 - Paramiko package
 Ansible will need a Linux version to run it. A WSL distro will work. (make sure to set WSL version to 1)
 
+Ansible and Paramiko can either be directly installed onto your linux distro with a package manager like apt:
 ```bash
-# Example
-npm install -g project-dependency
+sudo apt install ansible
+sudo apt install paramiko
+```
+
+Or you can create a python virtual env:
+```bash
+pip install virtualenv
+python3 -m venv venv
+source ./venv/bin/activate
+pip install ansible paramiko
+```
+You will have to run the source command every time you want to use ansible if you choose this method.
+
+## Usage
+
+### Python
+The when running the python script, you have to provide an argument with the path to your serial device file, or COM port name if you are on Windows.
+
