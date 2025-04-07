@@ -102,3 +102,19 @@ login local
 transport input ssh
 end
 ----------end of program run marker----------
+
+en
+terminal length 0
+conf term
+interface GigabitEthernet5/0/4
+switchport mode access
+switchport access vlan 99
+end
+conf term
+interface vlan99
+ip address 192.168.99.2 255.255.255.0
+no shutdown
+exit
+vlan 99
+end
+----------end of program run marker----------
