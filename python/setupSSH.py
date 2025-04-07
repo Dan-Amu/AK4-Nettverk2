@@ -109,11 +109,12 @@ except:
 
 filewrite_mode = False
 while True:
-    connection = input("How are you connected to the device? [1 for RS232, 2 for USB] :")
+    connection = "2"
+    #connection = input("How are you connected to the device? [1 for RS232, 2 for USB] :")
     if connection == "2":
         connType = "USB"
         skip_serial = False
-        print("USB connections can be slow, you may have to be patient.")
+        #print("USB connections can be slow, you may have to be patient.")
         break
     elif connection == "1":
         connType = "RS232"
@@ -132,7 +133,6 @@ while True:
         continue
 
 if not skip_serial:
-    print("does this get run? skip_serial")
     if not filewrite_mode:
         ser = serial.Serial(serialDevice, baudrate=starting_baud, bytesize=databits, parity=paritybits, stopbits=stop, xonxoff=flowcontrol, timeout=5)
     else:
@@ -156,8 +156,7 @@ try:
 except:
     output = ['show run | inc interface', 'interface GigabitEthernet5/0/1', 'interface GigabitEthernet5/0/2', 'interface GigabitEthernet5/0/3', 'interface GigabitEthernet5/0/4', 'interface GigabitEthernet5/0/5', 'interface GigabitEthernet5/0/6', 'interface GigabitEthernet5/0/7', 'interface GigabitEthernet5/0/8', 'interface GigabitEthernet5/0/9', 'interface GigabitEthernet5/0/10', 'interface GigabitEthernet5/0/11', 'interface GigabitEthernet5/0/12', 'interface GigabitEthernet5/0/13', 'interface GigabitEthernet5/0/14', 'interface GigabitEthernet5/0/15', 'interface GigabitEthernet5/0/16', 'interface GigabitEthernet5/0/17', 'interface GigabitEthernet5/0/18', 'interface GigabitEthernet5/0/19', 'interface GigabitEthernet5/0/20', 'interface GigabitEthernet5/0/21', 'interface GigabitEthernet5/0/22', 'interface GigabitEthernet5/0/23', 'interface GigabitEthernet5/0/24', 'interface GigabitEthernet5/0/25', 'interface GigabitEthernet5/0/26', 'interface GigabitEthernet5/0/27', 'interface GigabitEthernet5/0/28', 'interface Vlan1', 'monitor session 1 source interface Gi5/0/1 - 13', 'monitor session 1 destination interface Gi5/0/16', 'GigaSwitch#', 'GigaSwitch#']
 portLayout = getuserinput.getConfig(output)
-
-tasks = getuserinput.getInput()
+tasks = getuserinput.getInput(portLayout)
 #print(tasks)
 if not skip_serial:
     configureTasks(tasks)
