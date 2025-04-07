@@ -94,7 +94,7 @@ The scripts included in this reposiory are:
   
 - ![router1.yaml](https://github.com/Dan-Amu/AK4-Nettverk2/blob/main/ansible/router1.yaml) and ![router2.yaml](https://github.com/Dan-Amu/AK4-Nettverk2/blob/main/ansible/router2.yaml)
 
-  Configures a router with a connection to the L3 switch, as well as a connection down to the core switch and VLAN 10 and 99 for management. Also configures HSRP between routers.
+  Configures a router with a connection to the L3 switch, as well as a connection down to the core switch and VLAN 10 and 99 for management. Also configures HSRP between routers, and DHCP for VLAN 10.
   
 - ![coreSwitch.yaml](https://github.com/Dan-Amu/AK4-Nettverk2/blob/main/ansible/coreSwitch.yaml)
 
