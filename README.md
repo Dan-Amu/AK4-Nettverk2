@@ -70,12 +70,20 @@ The script will then apply all configuration.
 
 ### Ansible
 
-Every device you want to configure with Ansible will have to have an entry with its IP-address in the hosts file.
-
 Check that the paths in your ansible.cfg file match where you downloaded the repository.
 ![ansible cfgpaths](https://github.com/user-attachments/assets/c4bfe476-106b-4a72-95fb-343936fcab02)
 
 
+Every device you want to configure with Ansible will have to have an entry with its IP-address in the hosts file.
+![bilde](https://github.com/user-attachments/assets/bcc448e4-2801-4c7b-ae90-694f5b7350f1)
 
+All you have to do is add an entry with the device's IP address in the hosts file, and then put the name you assigned on the line above into the ansible script:
+![ansible hostsinscript](https://github.com/user-attachments/assets/88e6f8f0-d9dc-4f4c-b537-b1f3e77b8423)
 
-
+You can then run the ansible script with the ansible-playbook command. 
+The -K flag may be necessary, if it is enter the enable password.
+```bash
+ansible-playbook accessScript.yaml -K
+```
+Example:
+![bilde](https://github.com/user-attachments/assets/49f80bd7-3056-4881-b1d5-a0c0015877a1)
