@@ -1,5 +1,6 @@
 # AK4-Nettverk2
 
+## Description
 This repository contains a python script to automatically configure Cisco routers and switches to the point where they can be accessed by SSH (so Ansible can do further configuration).
 It also contains Ansible scripts to further configure Cisco routers and switches. The current Ansible files are set up to create a specific network, but should be easy to edit for other setups.
 
@@ -11,10 +12,6 @@ The ansible scripts are named corresponding to the names in this image.
 - [Description](#description)
 - [Prerequisites](#prerequisites)
 - [Usage](#usage)
-
-## Description
-
-A more detailed description of the project, how it works, and any background information. Mention any notable features or technologies used.
 
 ## Prerequisites
 ### Python
@@ -50,7 +47,7 @@ You will have to run the source command every time you want to use ansible if yo
 ## Usage
 
 ### Python
-The main python program is setupSSH.py.
+The main python program is ![setupSSH.py](https://github.com/Dan-Amu/AK4-Nettverk2/blob/main/python/setupSSH.py).
 The when running the python script, you have to provide an argument with the path to your serial device file, or COM port name if you are on Windows.
 ![bilde](https://github.com/user-attachments/assets/cb8da34f-e488-4034-ba4b-d73ae0e20fa6)
 
@@ -91,7 +88,18 @@ Example:
 
 
 The scripts included in this reposiory are:
-- L3switch.yaml
+- ![L3switch.yaml](https://github.com/Dan-Amu/AK4-Nettverk2/blob/main/ansible/L3switch.yaml)
+
   Configures a Layer 3 switch with three routing ports to connect a managemnt PC and the two routers, and configures OSPF to route between these.
-- router1.yaml and router2.yaml
-  Configures a router with a connection to the L3 switch, as well as a connection down to the core switch and VLAN 10 and 99 for management. Also configures HSRP between routers.
+  
+- ![router1.yaml](https://github.com/Dan-Amu/AK4-Nettverk2/blob/main/ansible/router1.yaml) and ![router2.yaml](https://github.com/Dan-Amu/AK4-Nettverk2/blob/main/ansible/router2.yaml)
+
+  Configures a router with a connection to the L3 switch, as well as a connection down to the core switch and VLAN 10 and 99 for management. Also configures HSRP between routers, and DHCP for VLAN 10.
+  
+- ![coreSwitch.yaml](https://github.com/Dan-Amu/AK4-Nettverk2/blob/main/ansible/coreSwitch.yaml)
+
+  Only configures trunk ports to the routers and access switch.
+
+- ![accessSwitch.yaml](https://github.com/Dan-Amu/AK4-Nettverk2/blob/main/ansible/accessSwitch.yaml)
+
+  Configures a trunk port up to the core switch, two ports in an EtherChannel over to a switch on the other network, aswell as access ports.
