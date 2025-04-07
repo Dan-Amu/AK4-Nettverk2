@@ -53,5 +53,17 @@ You will have to run the source command every time you want to use ansible if yo
 ## Usage
 
 ### Python
+The main python program is setupSSH.py.
 The when running the python script, you have to provide an argument with the path to your serial device file, or COM port name if you are on Windows.
+![bilde](https://github.com/user-attachments/assets/cb8da34f-e488-4034-ba4b-d73ae0e20fa6)
+
+When you run the python script, it will take a moment to test the connection to the device and retrieve information.
+It will then display this menu. Enter the number next to the option, and the script will ask you for necessary information.
+![bilde](https://github.com/user-attachments/assets/b12f1b72-b2ab-4669-a852-fdf9b3a4683e)
+
+
+![bilde](https://github.com/user-attachments/assets/55457f5f-7d6f-4341-941f-c38d6e306aab)
+
+
+
 
