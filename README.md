@@ -11,9 +11,6 @@ The ansible scripts are named corresponding to the names in this image.
 - [Description](#description)
 - [Prerequisites](#prerequisites)
 - [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
 
 ## Description
 
@@ -62,7 +59,22 @@ It will then display this menu. Enter the number next to the option, and the scr
 ![bilde](https://github.com/user-attachments/assets/b12f1b72-b2ab-4669-a852-fdf9b3a4683e)
 
 
+Here is an example that sets up an access-port and SVI(Switched VLAN Interface) on a switch.
 ![bilde](https://github.com/user-attachments/assets/55457f5f-7d6f-4341-941f-c38d6e306aab)
+
+To prepare a device for Ansible configuration, you will need to configure a port to access the device through, a user, a vlan interface(on switches), and the ssh server.
+If you want the device to be reachable through a router you may need a static route.
+
+No configuration will be applied to the device before you select option 9.
+The script will then apply all configuration.
+
+### Ansible
+
+Every device you want to configure with Ansible will have to have an entry with its IP-address in the hosts file.
+
+Check that the paths in your ansible.cfg file match where you downloaded the repository.
+![ansible cfgpaths](https://github.com/user-attachments/assets/c4bfe476-106b-4a72-95fb-343936fcab02)
+
 
 
 
